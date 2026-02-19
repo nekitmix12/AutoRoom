@@ -5,6 +5,8 @@ import androidx.compose.ui.window.ComposeUIViewController
 import cafe.adriel.voyager.navigator.Navigator
 import org.koin.compose.koinInject
 import org.koin.core.context.startKoin
+import v.companu.common.utils.ThreadUtils
+import v.company.common.logger.Logger
 
 fun MainViewController() = ComposeUIViewController { App() }
 

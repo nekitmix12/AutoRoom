@@ -5,19 +5,20 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.android.kotlin.multiplatform.library)
+    alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
 }
 
-apply { from("../tools/hooks/install-git-hooks.gradle.kts") }
+//apply { from("../tools/hooks/install-git-hooks.gradle.kts") }
 
 compose.resources {
     generateResClass = never
 }
 
 kotlin {
-    androidLibrary{
+    androidTarget()
+    /*android{
         namespace = "v.company"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
@@ -31,7 +32,18 @@ kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_21)
         }
-    }
+
+        androidResources {
+            enable = true
+        }
+        localDependencySelection {
+            selectBuildTypeFrom.set(listOf("debug", "release"))
+
+        }
+        compilations.getByName("main"){
+
+        }
+    }*/
     listOf(
         iosX64(),
         iosArm64(),
@@ -61,6 +73,7 @@ kotlin {
             implementation(libs.voyager.koin)
             implementation(libs.voyager.screenModel)
             implementation(libs.voyager.navigator)
+            implementation(libs.ui.tooling.preview)
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
@@ -73,5 +86,31 @@ kotlin {
         }
     }
 }
-
-
+android {
+    namespace = "v.company.app"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    defaultConfig {
+        applicationId = "v.company"
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        versionCode = 1
+        versionName = "1.0"
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+    dependencies {
+        debugImplementation(libs.compose.ui.tooling)
+    }
+}
